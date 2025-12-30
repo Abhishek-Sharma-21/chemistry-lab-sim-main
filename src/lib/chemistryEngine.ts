@@ -1,7 +1,5 @@
 // Chemistry Engine - Rule-based reaction system
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
 // 1. Reactivity Series (most reactive to least reactive)
 export const REACTIVITY_SERIES = [
   "Fr",
@@ -2893,78 +2891,7 @@ function getMetalFromCation(cation: string): string {
   return cationToMetal[cation] || "";
 }
 
-// Gemini API function for predicting unknown chemical reactions
-async function predictReactionWithGemini(
-  chemicals: Chemical[]
-): Promise<ReactionResult | null> {
-  try {
-    // Get API key from environment variable
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-    if (!apiKey) {
-      console.warn(
-        "Gemini API key not found. Set VITE_GEMINI_API_KEY environment variable."
-      );
-      return null;
-    }
-
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-
-    // Format chemicals for the prompt
-    const chemicalList = chemicals
-      .map((c) => `${c.name} (${c.formula})`)
-      .join(", ");
-
-    const prompt = `You are a chemistry expert. Predict what happens when these chemicals are mixed: ${chemicalList}.
-
-Please respond in this exact JSON format:
-{
-  "occurred": true/false,
-  "type": "synthesis"/"decomposition"/"displacement"/"precipitation"/"neutralization"/"combustion"/"photosynthesis"/"hydrolysis"/"no_reaction",
-  "equation": "chemical equation with proper formatting",
-  "products": ["product1", "product2"],
-  "observations": ["observation1", "observation2"],
-  "liquidColor": "#hexcolor or description",
-  "energyChange": "exothermic"/"endothermic"/"neutral",
-  "explanation": "brief explanation of the reaction"
-}
-
-If no reaction occurs, set occurred to false and type to "no_reaction".
-For the equation, use proper chemical notation with subscripts if needed.
-For liquidColor, use hex colors like "#3B82F6" for blue solutions.
-Only respond with valid JSON, no additional text.`;
-
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-
-    // Parse the JSON response
-    const reactionData = JSON.parse(text.trim());
-
-    // Validate the response structure
-    if (reactionData.occurred && reactionData.type !== "no_reaction") {
-      return {
-        occurred: reactionData.occurred,
-        type: reactionData.type,
-        equation: reactionData.equation,
-        products: reactionData.products || [],
-        observations: reactionData.observations || [],
-        liquidColor: reactionData.liquidColor || "#CBD5E1",
-        energyChange: reactionData.energyChange || "neutral",
-        explanation: reactionData.explanation || "Reaction predicted by AI",
-      };
-    }
-
-    return null;
-  } catch (error) {
-    console.error("Error calling Gemini API:", error);
-    return null;
-  }
-}
-
-export async function predictReaction(
-  chemicals: Chemical[]
-): Promise<ReactionResult> {
+export function predictReaction(chemicals: Chemical[]): ReactionResult {
   const noReaction: ReactionResult = {
     occurred: false,
     type: "no_reaction",
@@ -4697,16 +4624,6 @@ export async function predictReaction(
         };
       }
     }
-  }
-
-  // Try Gemini API for reactions not covered by the rule-based system
-  try {
-    const geminiResult = await predictReactionWithGemini(chemicals);
-    if (geminiResult) {
-      return geminiResult;
-    }
-  } catch (error) {
-    console.warn("Gemini API fallback failed:", error);
   }
 
   return noReaction;

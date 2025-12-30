@@ -13,9 +13,8 @@ export function ChemistryLab() {
   const [beakerChemicals, setBeakerChemicals] = useState<Chemical[]>([]);
   const [reaction, setReaction] = useState<ReactionResult | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleAddChemical = useCallback(async (chemical: Chemical) => {
+  const handleAddChemical = useCallback((chemical: Chemical) => {
     if (beakerChemicals.find(c => c.id === chemical.id)) {
       toast.info(`${chemical.name} is already in the beaker`);
       return;
@@ -25,21 +24,13 @@ export function ChemistryLab() {
     setBeakerChemicals(newChemicals);
 
     // Predict reaction
-    setIsLoading(true);
-    try {
-      const result = await predictReaction(newChemicals);
-      setReaction(result);
+    const result = predictReaction(newChemicals);
+    setReaction(result);
 
-      if (result.occurred) {
-        toast.success(`${result.type.charAt(0).toUpperCase() + result.type.slice(1)} reaction occurred!`);
-      } else {
-        toast.info(`${chemical.name} added to beaker`);
-      }
-    } catch (error) {
-      console.error('Error predicting reaction:', error);
-      toast.error('Error predicting reaction');
-    } finally {
-      setIsLoading(false);
+    if (result.occurred) {
+      toast.success(`${result.type.charAt(0).toUpperCase() + result.type.slice(1)} reaction occurred!`);
+    } else {
+      toast.info(`${chemical.name} added to beaker`);
     }
   }, [beakerChemicals]);
 
@@ -49,7 +40,7 @@ export function ChemistryLab() {
     toast.info('Beaker cleared');
   };
 
-  const handleClearOne = useCallback(async () => {
+  const handleClearOne = () => {
     if (beakerChemicals.length === 0) {
       toast.info('No chemicals to remove');
       return;
@@ -60,18 +51,11 @@ export function ChemistryLab() {
     setBeakerChemicals(newChemicals);
 
     // Predict reaction with remaining chemicals
-    setIsLoading(true);
-    try {
-      const result = await predictReaction(newChemicals);
-      setReaction(result);
-      toast.info(`${lastChemical.name} removed from beaker`);
-    } catch (error) {
-      console.error('Error predicting reaction:', error);
-      toast.error('Error predicting reaction');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [beakerChemicals]);
+    const result = predictReaction(newChemicals);
+    setReaction(result);
+
+    toast.info(`${lastChemical.name} removed from beaker`);
+  };
 
   // Filter chemicals based on search query
   const filteredChemicals = CHEMICALS.filter(chemical =>
@@ -308,7 +292,7 @@ export function ChemistryLab() {
             <h3 className="text-sm font-medium text-muted-foreground mb-3">
               Reaction Analysis
             </h3>
-            <ReactionOutput reaction={reaction} isLoading={isLoading} />
+            <ReactionOutput reaction={reaction} />
           </div>
         </div>
       </main>

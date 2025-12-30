@@ -5,27 +5,10 @@ import { Beaker, Flame, Snowflake, TestTube, Atom, Sparkles } from 'lucide-react
 
 interface ReactionOutputProps {
   reaction: ReactionResult | null;
-  isLoading?: boolean;
 }
 
 export const ReactionOutput = forwardRef<HTMLDivElement, ReactionOutputProps>(
-  ({ reaction, isLoading = false }, ref) => {
-    if (isLoading) {
-      return (
-        <div ref={ref} className="glass-effect rounded-2xl p-6 text-center">
-          <div className="flex flex-col items-center gap-3 text-muted-foreground">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            >
-              <Sparkles className="w-12 h-12 opacity-50" />
-            </motion.div>
-            <p className="text-sm">Analyzing reaction with AI...</p>
-          </div>
-        </div>
-      );
-    }
-
+  ({ reaction }, ref) => {
     if (!reaction) {
       return (
         <div ref={ref} className="glass-effect rounded-2xl p-6 text-center">
