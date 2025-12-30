@@ -1,0 +1,219 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 25% 97%;
+    --foreground: 215 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
+    --primary: 200 85% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 20% 92%;
+    --secondary-foreground: 215 25% 25%;
+
+    --muted: 210 15% 94%;
+    --muted-foreground: 215 15% 45%;
+
+    --accent: 165 60% 40%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 20% 88%;
+    --input: 210 20% 88%;
+    --ring: 200 85% 45%;
+
+    --radius: 0.75rem;
+
+    /* Chemistry-specific colors */
+    --lab-glass: 200 30% 95%;
+    --lab-glass-border: 200 20% 80%;
+    --beaker-liquid: 200 60% 85%;
+    
+    /* Ion colors */
+    --ion-copper: 210 80% 55%;
+    --ion-iron-ii: 140 50% 45%;
+    --ion-iron-iii: 30 70% 45%;
+    --ion-neutral: 200 15% 70%;
+    
+    /* Effect colors */
+    --bubble-color: 0 0% 100%;
+    --precipitate-copper: 15 60% 40%;
+    --precipitate-white: 0 0% 95%;
+
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -2px hsl(215 25% 15% / 0.08);
+    --shadow-glass: 0 8px 32px -8px hsl(200 85% 45% / 0.15);
+    --shadow-chemical: 0 4px 16px -4px hsl(200 85% 45% / 0.25);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 215 30% 10%;
+    --foreground: 210 20% 95%;
+
+    --card: 215 25% 14%;
+    --card-foreground: 210 20% 95%;
+
+    --popover: 215 25% 14%;
+    --popover-foreground: 210 20% 95%;
+
+    --primary: 200 85% 55%;
+    --primary-foreground: 215 30% 10%;
+
+    --secondary: 215 20% 20%;
+    --secondary-foreground: 210 20% 90%;
+
+    --muted: 215 20% 18%;
+    --muted-foreground: 210 15% 60%;
+
+    --accent: 165 60% 50%;
+    --accent-foreground: 215 30% 10%;
+
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 20% 22%;
+    --input: 215 20% 22%;
+    --ring: 200 85% 55%;
+
+    --lab-glass: 215 25% 18%;
+    --lab-glass-border: 215 20% 30%;
+    --beaker-liquid: 200 40% 25%;
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  code, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer utilities {
+  .glass-effect {
+    @apply bg-card/80 backdrop-blur-md border border-lab-glass-border shadow-glass;
+  }
+
+  .chemical-card {
+    @apply bg-card rounded-xl border border-border shadow-soft transition-all duration-300;
+  }
+
+  .chemical-card:hover {
+    @apply shadow-chemical border-primary/30;
+  }
+
+  .beaker-glass {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--lab-glass) / 0.6) 0%,
+      hsl(var(--lab-glass) / 0.3) 50%,
+      hsl(var(--lab-glass) / 0.5) 100%
+    );
+    border: 2px solid hsl(var(--lab-glass-border));
+    box-shadow: 
+      inset 0 0 30px hsl(var(--lab-glass) / 0.5),
+      0 10px 40px -10px hsl(215 25% 15% / 0.15);
+  }
+
+  .text-formula {
+    @apply font-mono text-sm tracking-wide;
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-glass {
+    box-shadow: var(--shadow-glass);
+  }
+
+  .shadow-chemical {
+    box-shadow: var(--shadow-chemical);
+  }
+}
+
+/* Bubble animation */
+@keyframes bubble-rise {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-100px) scale(0.5);
+    opacity: 0;
+  }
+}
+
+.animate-bubble {
+  animation: bubble-rise 2s ease-out infinite;
+}
+
+/* Precipitate settle animation */
+@keyframes settle {
+  0% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-settle {
+  animation: settle 1s ease-out forwards;
+}
+
+/* Liquid swirl animation */
+@keyframes swirl {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(3deg) scale(1.02);
+  }
+}
+
+.animate-swirl {
+  animation: swirl 3s ease-in-out infinite;
+}
