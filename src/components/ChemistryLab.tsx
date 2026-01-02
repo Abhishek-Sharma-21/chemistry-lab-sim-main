@@ -14,7 +14,7 @@ export function ChemistryLab() {
   const [reaction, setReaction] = useState<ReactionResult | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const handleAddChemical = useCallback((chemical: Chemical) => {
+  const handleAddChemical = useCallback(async (chemical: Chemical) => {
     if (beakerChemicals.find(c => c.id === chemical.id)) {
       toast.info(`${chemical.name} is already in the beaker`);
       return;
@@ -24,7 +24,7 @@ export function ChemistryLab() {
     setBeakerChemicals(newChemicals);
 
     // Predict reaction
-    const result = predictReaction(newChemicals);
+    const result = await predictReaction(newChemicals);
     setReaction(result);
 
     if (result.occurred) {
@@ -40,7 +40,7 @@ export function ChemistryLab() {
     toast.info('Beaker cleared');
   };
 
-  const handleClearOne = () => {
+  const handleClearOne = async () => {
     if (beakerChemicals.length === 0) {
       toast.info('No chemicals to remove');
       return;
@@ -51,7 +51,7 @@ export function ChemistryLab() {
     setBeakerChemicals(newChemicals);
 
     // Predict reaction with remaining chemicals
-    const result = predictReaction(newChemicals);
+    const result = await predictReaction(newChemicals);
     setReaction(result);
 
     toast.info(`${lastChemical.name} removed from beaker`);
